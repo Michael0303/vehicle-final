@@ -1,12 +1,13 @@
 // FCFS & DP
 
 // return entering time for both a_i and b_j
-// temporally pad the input a, b at index 0; need to be fixed later
-const dp = (W_equal, W_plus, alpha, beta, a, b) => {
+const dp = (W_equal, W_plus, alpha, beta, _a, _b) => {
     const Lane = {
         A: 0,
         B: 1,
     };
+    let a = [0, ..._a] // manually pad at index 0 here
+    let b = [0, ..._b]
 
     const print = (array) => {
         for (let k = 0; k <= alpha; k++) {
@@ -46,8 +47,8 @@ const dp = (W_equal, W_plus, alpha, beta, a, b) => {
 };
 
 const test = () => {
-    let a = [0, 1, 3]; // pad at index 0 here
-    let b = [0, 2, 4]; // pad at index 0 here
+    let a = [1, 3]; 
+    let b = [2, 4]; 
     dp(1, 3, 2, 2, a, b);
 };
 test();
