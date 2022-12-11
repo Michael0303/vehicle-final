@@ -30,10 +30,10 @@ const fcfs = (W_equal, W_plus, alpha, beta, _a, _b) => {
         } else {
             selected_lane = (a_now <= b_now) ? Lane.A : Lane.B
         }
-        let possible_entering_time = prev_entering_time + ((prev_lane === selected_lane || prev_lane === Lane.Out)? W_equal: W_plus)
+        let possible_entering_time = prev_entering_time + ((prev_lane === selected_lane || prev_lane === Lane.Out) ? W_equal : W_plus)
         // console.log("selected lane is:" + selected_lane.toString())
         // console.log("possible entering time is:" + possible_entering_time.toString())
-        prev_entering_time = Math.max(((selected_lane === Lane.A)? a_now : b_now), possible_entering_time)
+        prev_entering_time = Math.max(((selected_lane === Lane.A) ? a_now : b_now), possible_entering_time)
         entering_time[selected_lane].push(prev_entering_time)
         if (selected_lane === Lane.A) {
             a_index++
@@ -42,11 +42,57 @@ const fcfs = (W_equal, W_plus, alpha, beta, _a, _b) => {
             b_index++
             prev_lane = Lane.B
         }
-    }  
+    }
 
     return { entering_time, Lane };
 }
 
+const fcfs_multiple = (W_equal, W_plus, carLines, laneNum) => {
+    const Lane = {
+        Out: -1,
+    };
+
+    let newCarLines = carLines.map((carLine) => carLine.push(Infinity))
+    let index = Array.from({ length: laneNum }, () => 0)
+    // console.log(index)
+
+    const entering_time = {};
+    for (let i = 0; i < laneNum; i++) {
+        entering_time[i] = []
+    }
+
+    let prev_entering_time = 0
+    let prev_lane = Lane.Out
+
+    const checkCompleted = () => {
+        for (let i = 0; i < laneNum; i++) {
+            if (carLines[i][index[i]] !== Infinity) {
+                return true
+            }
+        }
+        return false
+    }
+
+    while (checkCompleted()) {
+
+        let selected_lane = 0
+        for (let i = 0; i < laneNum; i++) {
+            if (carLines[i][index[i]] < carLines[selected_lane][index[selected_lane]]) {
+                selected_lane = i
+            }
+        }
+        let possible_entering_time = prev_entering_time + ((prev_lane === selected_lane || prev_lane === Lane.Out) ? W_equal : W_plus)
+        // console.log("selected lane is:" + selected_lane.toString())
+        // console.log("possible entering time is:" + possible_entering_time.toString())
+        prev_entering_time = Math.max(carLines[selected_lane][index[selected_lane]], possible_entering_time)
+        entering_time[selected_lane].push(prev_entering_time)
+        index[selected_lane]++
+        prev_lane = selected_lane
+    }
+
+    return { entering_time, Lane };
+
+}
 
 const dp2 = (
     W_equal1,
@@ -183,7 +229,7 @@ const dp2 = (
                             mp2Lane === Lane.toMP2(Lane.A) ? W_equal2 : W_plus2;
                         return Math.max(
                             Math.max(a[i], time1[i - 1][j][mp1Lane] + W_1) +
-                                T_f,
+                            T_f,
                             time2[i - 1][j][k][lane] + W_2
                         );
                     });
@@ -200,7 +246,7 @@ const dp2 = (
                             mp2Lane === Lane.toMP2(Lane.B) ? W_equal2 : W_plus2;
                         return Math.max(
                             Math.max(b[i], time1[i][j - 1][mp1Lane] + W_1) +
-                                T_f,
+                            T_f,
                             time2[i][j - 1][k][lane] + W_2
                         );
                     });
@@ -315,8 +361,10 @@ const dp = (W_equal, W_plus, alpha, beta, _a, _b) => {
 const test = () => {
     let a = [1, 3];
     let b = [2, 4];
+    let carLines = [a, b, [5, 6, 7]]
     console.log(dp(1, 3, 2, 2, a, b));
     console.log(fcfs(1, 3, 2, 2, a, b));
+    console.log(fcfs_multiple(1, 3, carLines, 3))
 };
 const test2 = () => {
     let a = [1, 3];
@@ -326,3 +374,5 @@ const test2 = () => {
 };
 test();
 test2();
+
+// export { fcfs, dp, dp2 }
