@@ -1,4 +1,52 @@
 // FCFS & DP
+const fcfs = (W_equal, W_plus, alpha, beta, _a, _b) => {
+    const Lane = {
+        Out: -1,
+        A: 0,
+        B: 1,
+    };
+    let a = [..._a, Infinity]; // manually pad Infinity at the end
+    let b = [..._b, Infinity];
+
+    let a_index = 0
+    let b_index = 0
+
+    const entering_time = {};
+    entering_time[Lane.A] = [];
+    entering_time[Lane.B] = [];
+
+    let prev_entering_time = 0
+    let prev_lane = Lane.Out
+
+    while (a[a_index] !== Infinity || b[b_index] !== Infinity) {
+        let a_now = a[a_index]
+        let b_now = b[b_index]
+
+        let selected_lane
+        if (a_now === Infinity) {
+            selected_lane = Lane.B
+        } else if (b_now === Infinity) {
+            selected_lane = Lane.A
+        } else {
+            selected_lane = (a_now <= b_now) ? Lane.A : Lane.B
+        }
+        let possible_entering_time = prev_entering_time + ((prev_lane === selected_lane || prev_lane === Lane.Out)? W_equal: W_plus)
+        // console.log("selected lane is:" + selected_lane.toString())
+        // console.log("possible entering time is:" + possible_entering_time.toString())
+        prev_entering_time = Math.max(((selected_lane === Lane.A)? a_now : b_now), possible_entering_time)
+        entering_time[selected_lane].push(prev_entering_time)
+        if (selected_lane === Lane.A) {
+            a_index++
+            prev_lane = Lane.A
+        } else {
+            b_index++
+            prev_lane = Lane.B
+        }
+    }  
+
+    return { entering_time, Lane };
+}
+
 
 const dp2 = (
     W_equal1,
@@ -268,6 +316,7 @@ const test = () => {
     let a = [1, 3];
     let b = [2, 4];
     console.log(dp(1, 3, 2, 2, a, b));
+    console.log(fcfs(1, 3, 2, 2, a, b));
 };
 const test2 = () => {
     let a = [1, 3];
@@ -275,4 +324,5 @@ const test2 = () => {
     let c = [6, 8];
     dp2(1, 3, 1, 3, 4, 2, 2, 2, a, b, c);
 };
+test();
 test2();
