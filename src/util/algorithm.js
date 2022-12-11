@@ -52,7 +52,8 @@ const fcfs_multiple = (W_equal, W_plus, carLines, laneNum) => {
         Out: -1,
     };
 
-    let newCarLines = carLines.map((carLine) => carLine.push(Infinity))
+    carLines.map((carLine) => carLine.push(Infinity))
+    console.log(carLines)
     let index = Array.from({ length: laneNum }, () => 0)
     // console.log(index)
 
@@ -82,8 +83,6 @@ const fcfs_multiple = (W_equal, W_plus, carLines, laneNum) => {
             }
         }
         let possible_entering_time = prev_entering_time + ((prev_lane === selected_lane || prev_lane === Lane.Out) ? W_equal : W_plus)
-        // console.log("selected lane is:" + selected_lane.toString())
-        // console.log("possible entering time is:" + possible_entering_time.toString())
         prev_entering_time = Math.max(carLines[selected_lane][index[selected_lane]], possible_entering_time)
         entering_time[selected_lane].push(prev_entering_time)
         index[selected_lane]++
@@ -359,8 +358,8 @@ const dp = (W_equal, W_plus, alpha, beta, _a, _b) => {
 };
 
 const test = () => {
-    let a = [1, 3];
-    let b = [2, 4];
+    let a = [1, 3, 4, 6];
+    let b = [2, 4, 5, 9];
     let carLines = [a, b, [5, 6, 7]]
     console.log(dp(1, 3, 2, 2, a, b));
     console.log(fcfs(1, 3, 2, 2, a, b));
