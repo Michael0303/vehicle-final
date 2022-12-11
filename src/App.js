@@ -3,6 +3,8 @@ import CarModal from './components/CarModal';
 import { Component, useState } from 'react';
 import { Button } from 'antd';
 import { fcfs, dp, dp2 } from './util/algorithm';
+import Lane from './components/Lane'
+import Merge from './components/Merge';
 
 function App() {
     const [modalOpen, setModalOpen] = useState(false)
@@ -49,15 +51,14 @@ function App() {
                 laneNum={laneNum}
             />
             <Button onClick={() => {
-                setOutCome(fcfs(W_equal, W_plus, cars[0].length, cars[1].length, cars[0], cars[1]))
+                // setOutCome(fcfs(W_equal, W_plus, cars[0].length, cars[1].length, cars[0], cars[1]))
+                console.log(cars)
             }} >Run</Button>
             <div>
                 {"lane #: " + laneNum}<br />
-                {/* {() =>
-                    <Component>
-                        {cars.map((car_line) => <div>{car_line.toString()}</div>)}
-                    </Component>
-                } */}
+                {[...Array(laneNum).keys()].map((index) => <Lane key={index} id={index} x={20} y={200 + 55 * index} width={980} height={50} cars={cars} setCars={setCars} idx={index} />)}
+                <Merge x={1000} y={200} width={200} height={55 * laneNum} mergeHeight={50} />
+                <Lane key={"out"} id={"out"} x={1200} y={170 + (55 * laneNum) / 2} width={500} height={50} idx={-1} />
                 {outCome ? console.log(outCome) : "please input to calculate."}
             </div>
         </div>
