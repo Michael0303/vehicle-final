@@ -206,6 +206,28 @@ const dp2 = (
                 time1[i][j][Lane.B] == BA ? Lane.A : Lane.B;
         }
     }
+    const entering_time1 = {};
+    entering_time1[Lane.A] = [];
+    entering_time1[Lane.B] = [];
+    let lane =
+        time1[alpha][beta][Lane.A] < time1[alpha][beta][Lane.B]
+            ? Lane.A
+            : Lane.B;
+    let i = alpha,
+        j = beta;
+    let last_lane;
+    while (lane != Lane.Out) {
+        last_lane = lane;
+        entering_time1[lane].push(time1[i][j][lane]);
+        lane = backtrack1[i][j][lane];
+        if (last_lane === Lane.A) i--;
+        else j--;
+    }
+    entering_time1[Lane.A].reverse();
+    entering_time1[Lane.B].reverse();
+
+    for (let i = 1; i <= alpha; i++)
+        for (let j = 1; j <= beta; j++) console.log(i, j, backtrack1[i][j]);
 
     for (let i = 0; i <= alpha; i++) {
         for (let j = 0; j <= beta; j++) {
@@ -234,6 +256,8 @@ const dp2 = (
                     });
                     [time2[i][j][k][Lane.A], backtrack2[i][j][k][Lane.A]] =
                         findmin(ALanes);
+                    if (i == 1 && !j && !k)
+                        backtrack2[i][j][k][Lane.A] = Lane.Out;
                 }
                 if (j > 0) {
                     // BA, BB, BCa, BCb
@@ -251,6 +275,8 @@ const dp2 = (
                     });
                     [time2[i][j][k][Lane.B], backtrack2[i][j][k][Lane.B]] =
                         findmin(BLanes);
+                    if (j == 1 && !i && !k)
+                        backtrack2[i][j][k][Lane.B] = Lane.Out;
                 }
                 if (k > 0) {
                     // Ca
@@ -263,6 +289,8 @@ const dp2 = (
                         time2[i][j][k - 1][Lane.Ca] + W_equal2
                     );
                     time2[i][j][k][Lane.Ca] = Math.min(CaA, CaCa);
+                    backtrack2[i][j][k][Lane.Ca] =
+                        CaA < CaCa ? Lane.A : Lane.Ca;
                     // Cb
                     let CbB = Math.max(
                         c[k],
@@ -273,11 +301,41 @@ const dp2 = (
                         time2[i][j][k - 1][Lane.Cb] + W_equal2
                     );
                     time2[i][j][k][Lane.Cb] = Math.min(CbB, CbCb);
+                    backtrack2[i][j][k][Lane.Cb] =
+                        CbB < CbCb ? Lane.B : Lane.Cb;
+                    if (k == 1 && !i && !j) {
+                        [Lane.Ca, Lane.Cb].forEach(
+                            (cc) => (backtrack2[i][j][k][cc] = Lane.Out)
+                        );
+                    }
                 }
             }
         }
     }
-    console.log(Math.min(...time2[alpha][beta][gamma]));
+
+    const entering_time2 = {};
+    Lane.toList().forEach((lane) => {
+        entering_time2[lane] = [];
+    });
+    lane = findmin(time2[alpha][beta][gamma])[1]; // findmin return min, minIndex
+    (i = alpha), (j = beta), (k = gamma);
+    while (lane != Lane.Out) {
+        last_lane = lane;
+        entering_time2[lane].push(time2[i][j][k][lane]);
+        lane = backtrack2[i][j][k][lane];
+        if (last_lane === Lane.A) i--;
+        else if (last_lane === Lane.B) j--;
+        else k--;
+    }
+    Lane.toList().map((lane) => entering_time2[lane].reverse());
+    entering_time2[Lane.Ca] = [
+        ...entering_time2[Lane.Ca],
+        ...entering_time2[Lane.Cb],
+    ].sort();
+    entering_time2[Lane.Cb] = [];
+    return { entering_time1, entering_time2, Lane };
+    // print(backtrack2);
+    // return scheduled entering time to the first and second merge points
 };
 
 // return entering time for both a_i and b_j
@@ -368,7 +426,7 @@ const test = () => {
 const test2 = () => {
     let a = [1, 3];
     let b = [2, 4];
-    let c = [6, 8];
+    let c = [10, 12];
     dp2(1, 3, 1, 3, 4, 2, 2, 2, a, b, c);
 };
 test();
