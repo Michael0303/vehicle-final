@@ -15,7 +15,7 @@ export default function CarModalPerLine({ open, onCreate, onCancel, index }) {
                     .validateFields()
                     .then((values) => {
                         form.resetFields()
-                        console.log(values)
+                        // console.log(values)
                         onCreate(values)
                     })
                     .catch((e) => {

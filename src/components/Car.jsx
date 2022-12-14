@@ -2,9 +2,14 @@ import React from 'react'
 import styled from "styled-components";
 
 const CarWrapper = styled.div`
-    position: relative;
+    position: absolute;
+    right: ${(props) => props.x}px;
+    background-color: ${(props) => props.color};
     width: 30px;
     height: 20px;
+    text-align: center;
+    transition-duration: 1s;
+    z-index: 1;
 `;
 
 const MaterialIcon = () => (
@@ -15,9 +20,10 @@ const MaterialIcon = () => (
 const Link = styled(MaterialIcon)`
 `
 
-export default function Car({ x = 0, y = 0 }) {
+export default function Car({ x = 0, id, color }) {
+    console.log(`car #${id} is at (${x})`)
     return (
-        <CarWrapper x={x} y={y} >
+        <CarWrapper x={x} color={color}>
             <Link />
         </CarWrapper>
     )

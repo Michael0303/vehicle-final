@@ -14,7 +14,7 @@ const LaneBlock = styled.div`
     border-top: 5px solid white;
     border-bottom: 5px solid white;
     display: flex;
-    justify-content: flex-start;
+    // justify-content: flex-start;
     align-items: center;
 `;
 //   top: ${(props) => props.originX}px;
@@ -24,9 +24,10 @@ const LaneBlock = styled.div`
 
 const Lane = ({ x = 0, y = 0, width, height, cars, setCars, idx }) => {
     const [modalPerLineOpen, setModalPerLineOpen] = useState(false)
+    console.log(`block #${idx} is at (${x}, ${y})`)
     return <LaneBlock x={x} y={y} width={width} height={height}>
         {(idx !== -1) ? <Button onClick={() => setModalPerLineOpen(true)}>Add</Button> : null}
-        {(idx !== -1) ? cars[idx].map((car, index) => <Car key={"Car" + index} id={"Car" + index} x={x} y={y} />) : null}
+        {(idx !== -1) ? cars[idx].map((time, index) => time > 0 ? <Car key={"Car" + index} id={"Car" + index} x={20 * time} color={"pink"} /> : <Car key={"Car" + index} id={"Car" + index} x={-10} color={"blue"} />) : null}
         <CarModalPerLine
             open={modalPerLineOpen}
             onCreate={({ time }) => {

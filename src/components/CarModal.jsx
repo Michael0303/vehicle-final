@@ -15,7 +15,7 @@ export default function CarModal({ open, onCreate, onCancel, laneNum }) {
                     .validateFields()
                     .then((values) => {
                         form.resetFields()
-                        console.log(values)
+                        // console.log(values)
                         onCreate(values)
                     })
                     .catch((e) => {
