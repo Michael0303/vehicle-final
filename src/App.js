@@ -1,38 +1,35 @@
 import './App.css';
 import CarModal from './components/CarModal';
 import { useState, useEffect } from 'react';
-import { Button } from 'antd';
+import { Space, InputNumber, Button } from 'antd';
 import { fcfs, dp, dp2 } from './util/algorithm';
 import Lane from './components/Lane'
 import Merge from './components/Merge';
-
-// const LOCALSTORAGE_KEY1 = 'save-cars'
-// const LOCALSTORAGE_KEY2 = 'save-lanes'
-// const savedCars = localStorage.getItem(LOCALSTORAGE_KEY1)
-// const savedLanes = localStorage.getItem(LOCALSTORAGE_KEY2)
+import Car from './components/Car';
 
 function App() {
     const [modalOpen, setModalOpen] = useState(false)
-    // const [laneNum, setLaneNum] = useState((savedLanes === undefined) ? 2 : savedLanes)
     const [laneNum, setLaneNum] = useState(2)
     const [cars, setCars] = useState([[], []])
-    // const [cars, setCars] = useState((savedCars === undefined) ? [[], []] : savedCars)
     const [W_equal, setW_equal] = useState(1)
     const [W_plus, setW_plus] = useState(3)
-    const [outCome, setOutCome] = useState(undefined)
+    const [run, setRun] = useState(false)
 
-    // useEffect(() => {
-    //     if (!modalOpen) {
-    //         localStorage.setItem(LOCALSTORAGE_KEY1, cars)
-    //     }
-    // }, [cars, modalOpen])
+    // setInterval(() => {
+    //     setCars(cars.map((carLine) => carLine.filter((car) => car > -25).map((car) => car - 1)))
+    // }, 1000)
+    useEffect(() => {
+        if (run) {
+            let run = setInterval(() => {
+                setCars(cars.map((carLine) => carLine.filter((car) => car > -25).map((car) => car - 1)))
+            }, 500)
+            return () => clearInterval(run)
+        }
+    })
 
-    // useEffect(() => {
-    //     localStorage.setItem(LOCALSTORAGE_KEY2, laneNum)
-    // }, [laneNum])
 
     return (
-        <div className="App">
+        <div className="App" >
             <Button onClick={() => setModalOpen(true)}>
                 Add
             </Button>
@@ -49,7 +46,31 @@ function App() {
                     setCars(cars.slice(0, cars.length - 1))
                 }}
                 disabled={laneNum === 2}
-            >Lane -</Button>
+            >Lane -</Button><br />
+            <Space>
+                Wequal
+                <InputNumber min={1} value={W_equal} onChange={setW_equal} />
+                <Button
+                    type="primary"
+                    onClick={() => {
+                        setW_equal(1);
+                    }}
+                >
+                    Reset
+                </Button>
+            </Space><br />
+            <Space>
+                Wplus
+                <InputNumber min={3} value={W_plus} onChange={setW_plus} />
+                <Button
+                    type="primary"
+                    onClick={() => {
+                        setW_plus(3);
+                    }}
+                >
+                    Reset
+                </Button>
+            </Space><br />
             <CarModal
                 open={modalOpen}
                 onCreate={({ number, time }) => {
@@ -66,18 +87,33 @@ function App() {
                     setModalOpen(false)
                 }}
                 laneNum={laneNum}
-            />
-            <Button onClick={() => {
-                // setOutCome(fcfs(W_equal, W_plus, cars[0].length, cars[1].length, cars[0], cars[1]))
-                // console.log(cars)
-                setCars(cars.map((carLine) => carLine.map((car) => car > 0 ? car - 1 : car)))
-            }} >Run</Button>
-            <div>
-                {"lane #: " + laneNum}<br />
-                {[...Array(laneNum).keys()].map((index) => <Lane key={index} id={index} x={20} y={200 + 55 * index} width={980} height={50} cars={cars} setCars={setCars} idx={index} />)}
-                <Merge x={1000} y={200} width={200} height={55 * laneNum} mergeHeight={50} />
-                <Lane key={"out"} id={"out"} x={1200} y={170 + (55 * laneNum) / 2} width={500} height={50} idx={-1} />
-                {outCome ? console.log(outCome) : "please input to calculate."}
+            /><br />
+            <Space>
+                <Button onClick={() => {
+                    setRun(true)
+                    // console.log(cars)
+                    // setCars(cars.map((carLine) => carLine.filter((car) => car > -25).map((car) => car - 1)))
+                }} >Run</Button>
+                <Button
+                    type="primary"
+                    onClick={() => {
+                        setRun(false);
+                    }}
+                >
+                    Stop
+                </Button>
+            </Space><br />
+            <br />{"lane #: " + laneNum}<br />
+            <div style={{ position: 'absolute', textAlign: 'center' }}>
+                {[...Array(laneNum).keys()].map((index) => <Lane key={index} id={index} x={0} y={200 + 50 * index} width={1000} height={50} cars={cars} setCars={setCars} laneNum={laneNum} idx={index} />)}
+                <Merge x={1000} y={200 + 50 * (laneNum - 1) / 2} width={200} height={50 * laneNum} mergeHeight={50} />
+                <Lane key={"out"} id={"out"} x={1200} y={200 + 50 * (laneNum - 1) / 2} width={500} height={50} laneNum={laneNum} idx={-1} />
+                {cars.map((carLine, idx) =>
+                    carLine.map((time, index) => {
+                        if (time > 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1000 - 20 * time} y={200 + 50 * idx} color={"pink"} />
+                        if (time === 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1000} y={200 + 50 * idx} color={"blue"} />
+                        if (time < 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1200 - 20 * time} color={"green"} enter={true} y={200 + 50 * (laneNum - 1) / 2} />
+                    }))}
             </div>
         </div>
     );

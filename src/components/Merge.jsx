@@ -8,6 +8,8 @@ const MergeBlock = styled.div`
     border-left: ${(props) => props.width}px solid gray;
     border-top: ${(props) => props.retractLength}px solid transparent;
     border-bottom: ${(props) => props.retractLength}px solid transparent;
+    transform: translate(0%, -50%);
+    z-index: 0;
 `;
 
 const Merge = ({ x = 0, y = 0, width, height, mergeHeight }) => {

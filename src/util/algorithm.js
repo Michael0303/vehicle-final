@@ -318,7 +318,9 @@ const dp2 = (
         entering_time2[lane] = [];
     });
     lane = findmin(time2[alpha][beta][gamma])[1]; // findmin return min, minIndex
-    (i = alpha), (j = beta), (k = gamma);
+    i = alpha
+    j = beta
+    let k = gamma
     while (lane != Lane.Out) {
         last_lane = lane;
         entering_time2[lane].push(time2[i][j][k][lane]);
