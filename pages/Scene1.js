@@ -1,10 +1,10 @@
-import CarModal from './CarModal';
+import CarModal from '../components/CarModal';
 import { useState, useEffect } from 'react';
 import { Space, InputNumber, Button } from 'antd';
-import { fcfs, dp, dp2 } from '../util/algorithm';
-import Lane from './Lane'
-import Merge from './Merge';
-import Car from './Car';
+import { fcfs_multiple, dp, dp2 } from '../util/algorithm';
+import Lane from '../components/Lane'
+import Merge from '../components/Merge';
+import Car from '../components/Car';
 import styled from 'styled-components';
 
 const Scene1Wrapper = styled.div`
@@ -20,10 +20,9 @@ export default function Scene1() {
     const [W_equal, setW_equal] = useState(1)
     const [W_plus, setW_plus] = useState(3)
     const [run, setRun] = useState(false)
+    const [savedCars, setSavedCars] = useState([[], []])
+    const [result, setResult] = useState(undefined)
 
-    // setInterval(() => {
-    //     setCars(cars.map((carLine) => carLine.filter((car) => car > -25).map((car) => car - 1)))
-    // }, 1000)
     useEffect(() => {
         if (run) {
             let run = setInterval(() => {
@@ -33,49 +32,65 @@ export default function Scene1() {
         }
     })
 
+    useEffect(() => {
+        if (result !== undefined) {
+            setSavedCars(cars)
+            console.log("saved cars")
+            console.log(cars)
+        }
+    }, [result])
+
+    useEffect(() => {
+        console.log(result)
+        console.log(cars)
+    }, [result])
 
     return (
         <Scene1Wrapper>
-            <Button onClick={() => setModalOpen(true)}>
-                Add
-            </Button>
-            <Button
-                onClick={() => {
-                    setLaneNum((n) => n + 1)
-                    setCars([...cars, []])
-                }}
-                disabled={laneNum === 5}
-            >Lane +</Button>
-            <Button
-                onClick={() => {
-                    setLaneNum((n) => n - 1)
-                    setCars(cars.slice(0, cars.length - 1))
-                }}
-                disabled={laneNum === 2}
-            >Lane -</Button><br />
             <Space>
-                Wequal
-                <InputNumber min={1} value={W_equal} onChange={setW_equal} />
-                <Button
-                    type="primary"
-                    onClick={() => {
-                        setW_equal(1);
-                    }}
-                >
-                    Reset
+                <Button onClick={() => setModalOpen(true)}>
+                    Add
                 </Button>
-            </Space><br />
+                <Button
+                    onClick={() => {
+                        setLaneNum((n) => n + 1)
+                        setCars([...cars, []])
+                    }}
+                    disabled={laneNum === 5}
+                >Lane +</Button>
+                <Button
+                    onClick={() => {
+                        setLaneNum((n) => n - 1)
+                        setCars(cars.slice(0, cars.length - 1))
+                    }}
+                    disabled={laneNum === 2}
+                >Lane -</Button><br />
+            </Space> <br />
             <Space>
-                Wplus
-                <InputNumber min={3} value={W_plus} onChange={setW_plus} />
-                <Button
-                    type="primary"
-                    onClick={() => {
-                        setW_plus(3);
-                    }}
-                >
-                    Reset
-                </Button>
+                <Space>
+                    Wequal
+                    <InputNumber min={1} value={W_equal} onChange={setW_equal} />
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            setW_equal(1);
+                        }}
+                    >
+                        Reset
+                    </Button>
+                </Space><br />
+                <Space>
+                    Wplus
+                    <InputNumber min={3} value={W_plus} onChange={setW_plus} />
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            setW_plus(3);
+                        }}
+                    >
+                        Reset
+                    </Button>
+                </Space>
             </Space><br />
             <CarModal
                 open={modalOpen}
@@ -95,21 +110,38 @@ export default function Scene1() {
                 laneNum={laneNum}
             /><br />
             <Space>
-                <Button onClick={() => {
-                    setRun(true)
-                    // console.log(cars)
-                    // setCars(cars.map((carLine) => carLine.filter((car) => car > -25).map((car) => car - 1)))
-                }} >Run</Button>
+                <Button
+                    onClick={() => {
+                        setResult(fcfs_multiple(W_equal, W_plus, cars, laneNum))
+                    }}
+                    disabled={(result !== undefined)}
+                >Calculate Result</Button>
+                <Button
+                    onClick={() => {
+                        // setSavedCars(cars)
+                        setRun(true)
+                        // console.log(cars)
+                        // setCars(cars.map((carLine) => carLine.filter((car) => car > -25).map((car) => car - 1)))
+                    }}
+                    disabled={run || (result === undefined)}
+                >Run</Button>
                 <Button
                     type="primary"
                     onClick={() => {
                         setRun(false);
                     }}
-                >
-                    Stop
-                </Button>
+                    disabled={!run}
+                >Stop</Button>
+                <Button
+                    type="primary"
+                    onClick={() => {
+                        setRun(false)
+                        setResult(undefined)
+                        setCars(savedCars)
+                    }}
+                    disabled={run}
+                >Reset</Button>
             </Space><br />
-            <br />{"lane #: " + laneNum}<br />
             <div style={{ position: 'absolute', textAlign: 'center' }}>
                 {[...Array(laneNum).keys()].map((index) => <Lane key={index} id={index} x={0} y={200 + 50 * index} width={1000} height={50} cars={cars} setCars={setCars} laneNum={laneNum} idx={index} />)}
                 <Merge x={1000} y={200 + 50 * (laneNum - 1) / 2} width={200} height={50 * laneNum} mergeHeight={50} />

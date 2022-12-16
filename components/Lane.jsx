@@ -26,7 +26,7 @@ const LaneBlock = styled.div`
 
 const Lane = ({ x = 0, y = 0, width, height, cars, setCars, laneNum, idx }) => {
     const [modalPerLineOpen, setModalPerLineOpen] = useState(false)
-    console.log(`block #${idx} is at (${x}, ${y})`)
+    // console.log(`block #${idx} is at (${x}, ${y})`)
     return <LaneBlock x={x} y={y} width={width} height={height}>
         {(idx !== -1) ? <Button onClick={() => setModalPerLineOpen(true)}>Add</Button> : null}
         <CarModalPerLine

@@ -47,13 +47,13 @@ const fcfs = (W_equal, W_plus, alpha, beta, _a, _b) => {
     return { entering_time, Lane };
 }
 
-const fcfs_multiple = (W_equal, W_plus, carLines, laneNum) => {
+const fcfs_multiple = (W_equal, W_plus, _carLines, laneNum) => {
     const Lane = {
         Out: -1,
     };
 
-    carLines.map((carLine) => carLine.push(Infinity))
-    console.log(carLines)
+    let carLines = _carLines.map((line) => [...line, Infinity])
+    console.log(_carLines)
     let index = Array.from({ length: laneNum }, () => 0)
     // console.log(index)
 
@@ -455,7 +455,7 @@ const dp_multiple = (W_equal, W_plus, carLines, laneNum) => {
         indices[last_lane]--;
     }
     laneList(laneNum).forEach((lane) => entering_time[lane].reverse());
-    console.log(entering_time);
+    // console.log(entering_time);
     return { entering_time };
 };
 
@@ -551,7 +551,7 @@ const test2 = () => {
     let c = [10, 12];
     dp2(1, 3, 1, 3, 4, 2, 2, 2, a, b, c);
 };
-test();
+// test();
 // test2();
 
-// export { fcfs, dp, dp2 }
+export { fcfs, fcfs_multiple, dp, dp2, dp_multiple }

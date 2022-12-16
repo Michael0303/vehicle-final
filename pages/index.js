@@ -1,18 +1,20 @@
-import App from "next/app"
 import Head from "next/head"
 import Link from "next/link"
-import Scene1 from "../components/Scene1"
+import styled from "styled-components"
+
+const HomeWrapper = styled.div`
+    text-align: center;
+`
+
 export default function HomePage() {
     return (
-        <>
+        <HomeWrapper>
             <Head>
-                <title>Home - HomePage</title>
+                <title>Final Project</title>
             </Head>
-            {/* <Link href="/App"></Link>
-            <div>
-                Hello, this is HomePage!
-            </div> */}
-            <Scene1 />
-        </>
+            <h1>Welcome to our final project!</h1>
+            <h3>Click below button to go to each scenario</h3>
+            <Link href="/Scene1">Scene1</Link>
+        </HomeWrapper>
     )
 }
