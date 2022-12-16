@@ -35,6 +35,7 @@ const Lane = ({ x = 0, y = 0, width, height, cars, setCars, laneNum, idx }) => {
                 setCars(cars.map((car_line, index) => {
                     if (index === idx) {
                         car_line.push(time)
+                        car_line.sort()
                     }
                     return car_line
                 }))

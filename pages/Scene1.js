@@ -22,15 +22,29 @@ export default function Scene1() {
     const [run, setRun] = useState(false)
     const [savedCars, setSavedCars] = useState([[], []])
     const [result, setResult] = useState(undefined)
+    const [time, setTime] = useState(0)
 
     useEffect(() => {
         if (run) {
             let run = setInterval(() => {
-                setCars(cars.map((carLine) => carLine.filter((car) => car > -25).map((car) => car - 1)))
+                // setCars(cars.map((carLine) => carLine.filter((car) => car > -25).map((car) => car - 1)))
+                setTime(time + 1)
             }, 500)
             return () => clearInterval(run)
         }
     })
+
+    useEffect(() => {
+        // setCars(cars.map((carLine) => carLine.filter((car) => car > -25).map((car) => car - 1)))
+        setCars(cars.map((carLine, idx) => carLine.map((car, idy) => {
+            let enteringTime = result.entering_time[idx][idy]
+            if (car !== 0 || time >= enteringTime) {
+                return car - 1
+            } else {
+                return car
+            }
+        })))
+    }, [time])
 
     useEffect(() => {
         if (result !== undefined) {
@@ -98,6 +112,7 @@ export default function Scene1() {
                     setCars(cars.map((car_line, index) => {
                         if (index === number) {
                             car_line.push(time)
+                            car_line.sort()
                         }
                         return car_line
                     }))
