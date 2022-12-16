@@ -340,6 +340,125 @@ const dp2 = (
     // return scheduled entering time to the first and second merge points
 };
 
+const dp_multiple = (W_equal, W_plus, carLines, laneNum) => {
+    const Lane = { Out: -1 };
+    let padLines = carLines.map((line) => [0, ...line]);
+    let carCounts = carLines.map((line) => line.length);
+
+    const Iter = function (carCounts) {
+        this.carCounts = carCounts;
+        this.indices = this.carCounts.map(() => 0);
+        this.isEnd = false;
+        this.next = () => {
+            let i = this.indices.length - 1;
+            this.indices[i]++;
+            while (this.indices[i] > this.carCounts[i] && i >= 0) {
+                this.indices[i] = 0;
+                i--;
+                i >= 0 && this.indices[i]++;
+            }
+            if (i < 0) this.isEnd = true;
+        };
+        this.get = () => JSON.parse(JSON.stringify(this.indices));
+        this.end = () => this.isEnd;
+    };
+
+    // array access by array
+    // sizes: for example 5x5x4x3 array -> sizes: [5, 5, 4, 3]
+    const AArray = function (sizes, value) {
+        this.arr = value ? value : 0;
+        for (let i = sizes.length - 1; i >= 0; i--) {
+            this.arr = Array.from({ length: sizes[i] }, () =>
+                structuredClone(this.arr)
+            );
+        }
+        this.get = (indices) => {
+            // return by reference
+            let ret = this.arr;
+            indices.forEach((ind) => {
+                ret = ret[ind];
+            });
+            return ret;
+        };
+    };
+
+    const findmin = (arr) => {
+        if (arr.length === 0) throw "array length equals to zero";
+        let min = arr[0];
+        let minIndex = 0;
+
+        for (let i = 1; i < arr.length; i++) {
+            if (arr[i] < min) {
+                minIndex = i;
+                min = arr[i];
+            }
+        }
+        return [min, minIndex];
+    };
+
+    const laneList = (laneNum) => {
+        return [...Array(laneNum)].map((_, lane) => lane);
+    };
+
+    let time = new AArray(
+        [...carCounts.map((count) => count + 1), laneNum],
+        Infinity
+    );
+
+    let backtrack = new AArray(
+        [...carCounts.map((count) => count + 1), laneNum],
+        Lane.Out
+    );
+
+    for (let iter = new Iter(carCounts); !iter.end(); iter.next()) {
+        let indices = iter.get();
+        if (indices.every((ind) => ind === 0)) {
+            [...Array(laneNum)].forEach((_, lane) => {
+                time.get(indices)[lane] = 0;
+                backtrack.get(indices)[lane] = Lane.Out;
+            });
+            continue;
+        }
+        // time comes from each lane
+        indices.forEach((ind, thisLane) => {
+            if (ind == 0) return;
+            const newIndices = JSON.parse(JSON.stringify(indices));
+            newIndices[thisLane]--;
+            const laneTimes = [...Array(laneNum)].map((_, prevLane) => {
+                const W = prevLane === thisLane ? W_equal : W_plus;
+                // in dp2: AA => max(a[i], time1[i-1][j][Lane.A])
+                return Math.max(
+                    padLines[thisLane][ind],
+                    time.get(newIndices)[prevLane] + W
+                );
+            });
+            const [min, minIndex] = findmin(laneTimes);
+            // time.get(indices)[thisLane] = Math.min(...laneTimes);
+            time.get(indices)[thisLane] = min;
+            backtrack.get(indices)[thisLane] = minIndex;
+            // sum of all indices == 1 -> other indices are 0 and this index is 1
+            if (indices.reduce((prev, curr) => prev + curr) == 1)
+                backtrack.get(indices)[thisLane] = Lane.Out;
+        });
+    }
+    const entering_time = {};
+    laneList(laneNum).forEach((lane) => {
+        entering_time[lane] = [];
+    });
+    let lane = findmin(time.get(carCounts))[1];
+    let indices = structuredClone(carCounts);
+    let last_lane;
+    while (lane != Lane.Out) {
+        last_lane = lane;
+        entering_time[lane].push(time.get(indices)[lane]);
+        lane = backtrack.get(indices)[lane];
+        indices[last_lane]--;
+    }
+    laneList(laneNum).forEach((lane) => entering_time[lane].reverse());
+    console.log(entering_time);
+    return { entering_time };
+};
+
 // return entering time for both a_i and b_j
 const dp = (W_equal, W_plus, alpha, beta, _a, _b) => {
     const Lane = {
@@ -420,10 +539,11 @@ const dp = (W_equal, W_plus, alpha, beta, _a, _b) => {
 const test = () => {
     let a = [1, 3, 4, 6];
     let b = [2, 4, 5, 9];
-    let carLines = [a, b, [5, 6, 7]]
-    console.log(dp(1, 3, 2, 2, a, b));
-    console.log(fcfs(1, 3, 2, 2, a, b));
-    console.log(fcfs_multiple(1, 3, carLines, 3))
+    let carLines = [a, b, [5, 6, 7]];
+    // console.log(dp(1, 3, 2, 2, a, b));
+    // console.log(fcfs(1, 3, 2, 2, a, b));
+    // console.log(fcfs_multiple(1, 3, carLines, 3))
+    dp_multiple(1, 3, carLines, 3);
 };
 const test2 = () => {
     let a = [1, 3];
@@ -432,6 +552,6 @@ const test2 = () => {
     dp2(1, 3, 1, 3, 4, 2, 2, 2, a, b, c);
 };
 test();
-test2();
+// test2();
 
 // export { fcfs, dp, dp2 }
