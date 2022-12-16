@@ -1,13 +1,19 @@
-import './App.css';
-import CarModal from './components/CarModal';
+import CarModal from './CarModal';
 import { useState, useEffect } from 'react';
 import { Space, InputNumber, Button } from 'antd';
-import { fcfs, dp, dp2 } from './util/algorithm';
-import Lane from './components/Lane'
-import Merge from './components/Merge';
-import Car from './components/Car';
+import { fcfs, dp, dp2 } from '../util/algorithm';
+import Lane from './Lane'
+import Merge from './Merge';
+import Car from './Car';
+import styled from 'styled-components';
 
-function App() {
+const Scene1Wrapper = styled.div`
+    text-align: center;
+    position: relative;
+`
+
+
+export default function Scene1() {
     const [modalOpen, setModalOpen] = useState(false)
     const [laneNum, setLaneNum] = useState(2)
     const [cars, setCars] = useState([[], []])
@@ -29,7 +35,7 @@ function App() {
 
 
     return (
-        <div className="App" >
+        <Scene1Wrapper>
             <Button onClick={() => setModalOpen(true)}>
                 Add
             </Button>
@@ -115,8 +121,7 @@ function App() {
                         if (time < 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1200 - 20 * time} color={"green"} enter={true} y={200 + 50 * (laneNum - 1) / 2} />
                     }))}
             </div>
-        </div>
+        </Scene1Wrapper>
     );
 }
 
-export default App;
