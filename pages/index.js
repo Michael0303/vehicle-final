@@ -14,7 +14,8 @@ export default function HomePage() {
             </Head>
             <h1>Welcome to our final project!</h1>
             <h3>Click below button to go to each scenario</h3>
-            <Link href="/Scene1">Scene1</Link>
+            <Link href="/Scene1">Scene1</Link><br />
+            <Link href="/Scene2">Scene2</Link>
         </HomeWrapper>
     )
 }

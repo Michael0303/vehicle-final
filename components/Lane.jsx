@@ -28,7 +28,7 @@ const Lane = ({ x = 0, y = 0, width, height, cars, setCars, laneNum, idx }) => {
     const [modalPerLineOpen, setModalPerLineOpen] = useState(false)
     // console.log(`block #${idx} is at (${x}, ${y})`)
     return <LaneBlock x={x} y={y} width={width} height={height}>
-        {(idx !== -1) ? <Button onClick={() => setModalPerLineOpen(true)}>Add</Button> : null}
+        {(idx >= 0) ? <Button onClick={() => setModalPerLineOpen(true)}>Add</Button> : null}
         <CarModalPerLine
             open={modalPerLineOpen}
             onCreate={({ time }) => {

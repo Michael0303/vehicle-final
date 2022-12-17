@@ -1,7 +1,6 @@
-import CarModal from '../components/CarModal';
 import { useState, useEffect } from 'react';
 import { Space, InputNumber, Button, Radio } from 'antd';
-import { fcfs_multiple, dp, dp2, dp_multiple } from '../util/algorithm';
+import { dp2 } from '../util/algorithm';
 import Lane from '../components/Lane'
 import Merge from '../components/Merge';
 import Car from '../components/Car';
@@ -23,17 +22,18 @@ const TableWrapper = styled.div`
 
 export default function Scene1() {
     const [modalOpen, setModalOpen] = useState(false)
-    const [laneNum, setLaneNum] = useState(2)
-    const [cars, setCars] = useState([[], []])
-    const [W_equal, setW_equal] = useState(1)
-    const [W_plus, setW_plus] = useState(3)
+    const [cars, setCars] = useState([[], [], []])
+    const [W_equal1, setW_equal1] = useState(1)
+    const [W_plus1, setW_plus1] = useState(3)
+    const [W_equal2, setW_equal2] = useState(1)
+    const [W_plus2, setW_plus2] = useState(3)
+    const [transferTime, setTransferTime] = useState(10)
     const [run, setRun] = useState(false)
-    const [savedCars, setSavedCars] = useState([[], []])
+    const [savedCars, setSavedCars] = useState([[], [], []])
     const [result, setResult] = useState(undefined)
     const [time, setTime] = useState(0)
     const [choice, setChoice] = useState(0)
-
-    let algorithm = [fcfs_multiple, dp_multiple]
+    const laneNum = 3
 
     useEffect(() => {
         if (run) {
@@ -48,14 +48,15 @@ export default function Scene1() {
     useEffect(() => {
         // setCars(cars.map((carLine) => carLine.filter((car) => car > -25).map((car) => car - 1)))
         if (time > 0) {
-            setCars(cars.map((carLine, idx) => carLine.map((car, idy) => {
-                let enteringTime = result.entering_time[idx][idy]
-                if (car !== 0 || time >= enteringTime) {
-                    return car - 1
-                } else {
-                    return car
-                }
-            })))
+            // setCars(cars.map((carLine, idx) => carLine.map((car, idy) => {
+            //     let enteringTime = result.entering_time[idx][idy]
+            //     if (car !== 0 || time >= enteringTime) {
+            //         return car - 1
+            //     } else {
+            //         return car
+            //     }
+            // })))
+            setCars(cars.map((carLine, idx) => carLine.map((car, idy) => car - 1)))
         }
     }, [time])
 
@@ -76,76 +77,65 @@ export default function Scene1() {
     return (
         <Scene1Wrapper>
             <Space>
-                <Button onClick={() => setModalOpen(true)} disabled={result !== undefined}>
-                    Add
+                Wequal1
+                <InputNumber min={1} value={W_equal1} onChange={setW_equal1} />
+                <Button
+                    type="primary"
+                    onClick={() => {
+                        setW_equal1(1);
+                    }}
+                >
+                    Reset
                 </Button>
+                Wplus1
+                <InputNumber min={3} value={W_plus1} onChange={setW_plus1} />
                 <Button
+                    type="primary"
                     onClick={() => {
-                        setLaneNum((n) => n + 1)
-                        setCars([...cars, []])
+                        setW_plus1(3);
                     }}
-                    disabled={laneNum === 5 || result !== undefined}
-                >Lane +</Button>
-                <Button
-                    onClick={() => {
-                        setLaneNum((n) => n - 1)
-                        setCars(cars.slice(0, cars.length - 1))
-                    }}
-                    disabled={laneNum === 2 || result !== undefined}
-                >Lane -</Button><br />
-            </Space> <br />
-            <Space>
-                <Space>
-                    Wequal
-                    <InputNumber min={1} value={W_equal} onChange={setW_equal} />
-                    <Button
-                        type="primary"
-                        onClick={() => {
-                            setW_equal(1);
-                        }}
-                    >
-                        Reset
-                    </Button>
-                </Space><br />
-                <Space>
-                    Wplus
-                    <InputNumber min={3} value={W_plus} onChange={setW_plus} />
-                    <Button
-                        type="primary"
-                        onClick={() => {
-                            setW_plus(3);
-                        }}
-                    >
-                        Reset
-                    </Button>
-                </Space>
+                >
+                    Reset
+                </Button>
             </Space><br />
-            <CarModal
-                open={modalOpen}
-                onCreate={({ number, time }) => {
-                    setCars(cars.map((car_line, index) => {
-                        if (index === number) {
-                            car_line.push(time)
-                            car_line.sort()
-                        }
-                        return car_line
-                    }))
-                    // console.log(cars)
-                    setModalOpen(false)
-                }}
-                onCancel={() => {
-                    setModalOpen(false)
-                }}
-                laneNum={laneNum}
-            /><br />
-            <Radio.Group onChange={(e) => setChoice(e.target.value)} value={choice}>
-                <Radio value={0}>FCFS</Radio>
-                <Radio value={1}>DP</Radio>
-            </Radio.Group><br />
+            <Space>
+                Wequal2
+                <InputNumber min={1} value={W_equal2} onChange={setW_equal2} />
+                <Button
+                    type="primary"
+                    onClick={() => {
+                        setW_equal2(1);
+                    }}
+                >
+                    Reset
+                </Button>
+                Wplus2
+                <InputNumber min={3} value={W_plus2} onChange={setW_plus2} />
+                <Button
+                    type="primary"
+                    onClick={() => {
+                        setW_plus2(3);
+                    }}
+                >
+                    Reset
+                </Button>
+            </Space><br />
+            <Space>
+                Transfer Time
+                <InputNumber min={1} value={transferTime} onChange={setTransferTime} />
+                <Button
+                    type="primary"
+                    onClick={() => {
+                        setTransferTime(10);
+                    }}
+                >
+                    Reset
+                </Button>
+            </Space><br />
             <Space>
                 <Button
                     onClick={() => {
-                        setResult(algorithm[choice](W_equal, W_plus, cars, laneNum))
+                        setResult(dp2(W_equal1, W_plus1, W_equal2, W_plus2, transferTime, cars[0], cars[1], cars[2]))
                     }}
                     disabled={(result !== undefined)}
                 >Calculate Result</Button>
@@ -178,20 +168,44 @@ export default function Scene1() {
             </Space><br />
             <h3>Current Time is {time}</h3>
             <div style={{ position: 'absolute', textAlign: 'center' }}>
-                {[...Array(laneNum).keys()].map((index) => <Lane key={index} id={index} x={0} y={200 + 50 * index} width={1000} height={50} cars={cars} setCars={setCars} laneNum={laneNum} idx={index} />)}
-                <Merge x={1000} y={200 + 50 * (laneNum - 1) / 2} width={200} height={50 * laneNum} mergeHeight={50} />
-                <Lane key={"out"} id={"out"} x={1200} y={200 + 50 * (laneNum - 1) / 2} width={500} height={50} laneNum={laneNum} idx={-1} />
-                {cars.map((carLine, idx) =>
-                    carLine.map((time, index) => {
-                        if (time > 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1000 - 20 * time} y={200 + 50 * idx} color={"pink"} />
-                        if (time === 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1000} y={200 + 50 * idx} color={"blue"} />
-                        if (time < 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1200 - 20 * time} color={"green"} enter={true} y={200 + 50 * (laneNum - 1) / 2} />
-                    }))}
+                <Lane key={"lane-1"} id={"lane-1"} x={0} y={200} width={500} height={50} cars={cars} setCars={setCars} laneNum={laneNum} idx={0} />
+                <Lane key={"lane-2"} id={"lane-2"} x={0} y={250} width={500} height={50} cars={cars} setCars={setCars} laneNum={laneNum} idx={1} />
+                <Merge key={"merge-1"} id={"merge-1"} x={500} y={225} width={100} height={50 * 2} mergeHeight={50} />
+                <Lane key={"lane-out1"} id={"lane-out1"} x={600} y={225} width={200} height={50} cars={cars} setCars={setCars} laneNum={laneNum} idx={-1} />
+                <Lane key={"lane-3"} id={"lane-3"} x={0} y={325} width={800} height={50} cars={cars} setCars={setCars} laneNum={laneNum} idx={2} />
+                <Merge key={"merge-2"} id={"merge-2"} x={800} y={275} width={200} height={150} mergeHeight={50} />
+                <Lane key={"lane-out2"} id={"lane-out2"} x={1000} y={275} width={500} height={50} cars={cars} setCars={setCars} laneNum={laneNum} idx={-2} />
+
+                {cars[0].map((time, index) => {
+                    let idx = 0
+                    if (time > 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={500 - 20 * time} y={200} color={"pink"} />
+                    if (time === 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={500} y={200} color={"red"} />
+                    if (time < 0 && time > -transferTime) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={600 - 200 * time / transferTime} color={"green"} enter={true} y={225} />
+                    if (time < 0 && time === -transferTime) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={800} color={"red"} enter={false} y={225} />
+                    if (time < 0 && time < -transferTime) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1000 - 20 * (time + transferTime)} color={"green"} enter={true} y={275} />
+                })}
+                {cars[1].map((time, index) => {
+                    let idx = 1
+                    if (time > 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={500 - 20 * time} y={250} color={"pink"} />
+                    if (time === 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={500} y={250} color={"red"} />
+                    if (time < 0 && time > -transferTime) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={600 - 200 * time / transferTime} color={"green"} enter={true} y={225} />
+                    if (time < 0 && time === -transferTime) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={800} color={"red"} enter={false} y={225} />
+                    if (time < 0 && time < -transferTime) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1000 - 20 * (time + transferTime)} color={"green"} enter={true} y={275} />
+                })}
+                {cars[2].map((time, index) => {
+                    let idx = 2
+                    if (time > 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={800 - 20 * time} y={325} color={"pink"} />
+                    if (time === 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={800} y={325} color={"red"} />
+                    if (time < 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1000 - 20 * time} color={"green"} enter={true} y={275} />
+                })}
             </div>
             {(result === undefined) ? null :
                 <TableWrapper>
-                    {[...Array(laneNum).keys()].map((idx) => {
-                        return <Result laneIndex={idx} enteringTime={result.entering_time[idx]} currentTime={cars[idx]} />
+                    {[...Array(2).keys()].map((idx) => {
+                        return <Result laneIndex={idx} enteringTime={result.entering_time1[idx]} currentTime={cars[idx]} />
+                    })}
+                    {[...Array(3).keys()].map((idx) => {
+                        return <Result laneIndex={idx} enteringTime={result.entering_time2[idx]} currentTime={cars[idx]} />
                     })}
                 </TableWrapper>
             }
