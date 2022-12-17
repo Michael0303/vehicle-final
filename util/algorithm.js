@@ -548,6 +548,6 @@ const test2 = () => {
     console.log(result)
 };
 // test();
-test2();
+// test2();
 
-// export { fcfs, fcfs_multiple, dp, dp2, dp_multiple }
+export { fcfs, fcfs_multiple, dp, dp2, dp_multiple }
