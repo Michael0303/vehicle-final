@@ -202,32 +202,14 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
             }
         }
     }
-    const entering_time1 = {};
-    entering_time1[Lane.A] = [];
-    entering_time1[Lane.B] = [];
-    let lane =
-        time1[alpha][beta][Lane.A] < time1[alpha][beta][Lane.B]
-            ? Lane.A
-            : Lane.B;
-    let i = alpha,
-        j = beta;
-    let last_lane;
-    while (lane != Lane.Out) {
-        last_lane = lane;
-        entering_time1[lane].push(time1[i][j][lane]);
-        lane = backtrack1[i][j][lane];
-        if (last_lane === Lane.A) i--;
-        else j--;
-    }
-    entering_time1[Lane.A].reverse();
-    entering_time1[Lane.B].reverse();
 
-    for (let i = 1; i <= alpha; i++)
-        for (let j = 1; j <= beta; j++) console.log(i, j, backtrack1[i][j]);
+    // for (let i = 1; i <= alpha; i++)
+    //     for (let j = 1; j <= beta; j++) console.log(i, j, backtrack1[i][j]);
 
     for (let i = 0; i <= alpha; i++) {
         for (let j = 0; j <= beta; j++) {
             for (let k = 0; k <= gamma; k++) {
+                // console.log('i, j, k', i, j, k)
                 if (i + j + k === 0) {
                     Lane.toList().map((lane) => {
                         time2[i][j][k][lane] = 0;
@@ -261,6 +243,7 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
                         backtrack2[i][j][k][Lane.A] = minIndices[0]
                     if (i == 1 && !j && !k)
                         backtrack2[i][j][k][Lane.A] = Lane.Out;
+                    // console.log('A', time2[i][j][k][Lane.A], backtrack2[i][j][k][Lane.A])
                 }
                 if (j > 0) {
                     // BA, BB, BCa, BCb
@@ -286,6 +269,7 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
                         backtrack2[i][j][k][Lane.B] = minIndices[0]
                     if (j == 1 && !i && !k)
                         backtrack2[i][j][k][Lane.B] = Lane.Out;
+                    // console.log('B', time2[i][j][k][Lane.B], backtrack2[i][j][k][Lane.B])
                 }
                 if (k > 0) {
                     // Ca
@@ -300,6 +284,7 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
                     time2[i][j][k][Lane.Ca] = Math.min(CaA, CaCa);
                     backtrack2[i][j][k][Lane.Ca] =
                         CaA < CaCa ? Lane.A : Lane.Ca;
+                    // console.log('Ca', time2[i][j][k][Lane.Ca], backtrack2[i][j][k][Lane.Ca])
                     // Cb
                     let CbB = Math.max(
                         c[k],
@@ -317,42 +302,64 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
                             (cc) => (backtrack2[i][j][k][cc] = Lane.Out)
                         );
                     }
+                    // console.log('Cb', time2[i][j][k][Lane.Cb], backtrack2[i][j][k][Lane.Cb])
                 }
             }
         }
     }
 
+    const entering_time1 = {};
+    entering_time1[Lane.A] = []
+    entering_time1[Lane.B] = []
     const entering_time2 = {};
     Lane.toList().forEach((lane) => {
         entering_time2[lane] = [];
     });
-    const [min, minIndices] = findmin(time2[alpha][beta][gamma]);
-    if (minIndices.length > 1 && minIndices.some(lane => lane === Lane.A || lane === Lane.B)) {
-        // same result from A, B => follow time1 order
-        lane = time1[alpha][beta][Lane.A] < time1[alpha][beta][Lane.B] ? Lane.A : Lane.B
-    } else {
-        lane = minIndices[0]
+
+    const getLane = (i, j, k) => {
+        if (i + j + k === 0 )
+            return Lane.Out
+        const [min, minIndices] = findmin(time2[i][j][k]);
+        let lane;
+        if (minIndices.length > 1 && minIndices.some(lane => lane === Lane.A && lane === Lane.B)) {
+            // same result from A, B => follow time1 order
+            // lane = time1[i][j][Lane.A] < time1[i][j][Lane.B] ? Lane.A : Lane.B
+        } else {
+            lane = minIndices[0]
+        }
+        // console.log('i, j, k', i, j, k)
+        // console.log('time2', time2[i][j][k])
+        // console.log('lane', lane)
+        return lane
     }
-    i = alpha;
-    j = beta;
+    let i = alpha;
+    let j = beta;
     let k = gamma;
+    let lane = getLane(i, j, k)
+    let last_lane;
     while (lane != Lane.Out) {
         last_lane = lane;
-        console.log('i,j,k', i, j, k)
-        console.log('lane', lane)
-        console.log('before push', time2[i][j][k])
         entering_time2[lane].push(time2[i][j][k][lane]);
-        lane = backtrack2[i][j][k][lane];
-        if (last_lane === Lane.A) i--;
-        else if (last_lane === Lane.B) j--;
+        if (last_lane === Lane.A) {
+            entering_time1[Lane.A].push(time1[i][j][Lane.A])
+            i--
+        }
+        else if (last_lane === Lane.B) {
+            entering_time1[Lane.B].push(time1[i][j][Lane.B])
+            j--;
+        }
         else k--;
+        lane = getLane(i, j, k)
     }
     Lane.toList().map((lane) => entering_time2[lane].reverse());
     entering_time2[Lane.Ca] = [
         ...entering_time2[Lane.Ca],
         ...entering_time2[Lane.Cb],
     ].sort((a, b) => a - b);
+    entering_time1[Lane.A].reverse()
+    entering_time1[Lane.B].reverse()
     entering_time2[Lane.Cb] = [];
+
     return { entering_time1, entering_time2, Lane };
     // print(backtrack2);
     // return scheduled entering time to the first and second merge points
@@ -566,10 +573,11 @@ const test = () => {
     dp_multiple(1, 3, carLines, 3);
 };
 const test2 = () => {
-    let a = [];
-    let b = [3];
-    let c = [];
-    const result = dp2(1, 3, 1, 3, 3, a, b, c);
+    let a = [5];
+    let b = [6];
+    let c = [5, 10];
+    const result = dp2(1, 3, 1, 3, 5, a, b, c);
+    delete result['Lane']
     console.log(result)
 };
 // test();
