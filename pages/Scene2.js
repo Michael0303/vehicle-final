@@ -229,11 +229,13 @@ export default function Scene1() {
             {(result === undefined) ? null :
                 <>
                     <TableWrapper1>
+                        Merging Point 1
                         {[...Array(2).keys()].map((idx) => {
                             return <Result laneIndex={idx} enteringTime={result.entering_time1[idx]} arrivingTime={savedCars[idx]} currentTime={cars[idx]} />
                         })}
                     </TableWrapper1>
                     <TableWrapper2>
+                        Merging Point 2
                         {[...Array(3).keys()].map((idx) => {
                             return <Result laneIndex={idx} enteringTime={result.entering_time2[idx]} arrivingTime={savedCars[idx]} currentTime={cars[idx]} />
                         })}
