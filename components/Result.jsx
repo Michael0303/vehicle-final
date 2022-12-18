@@ -48,8 +48,8 @@ const columns = [
 ];
 
 const Result = ({ laneIndex, enteringTime, arrivingTime, currentTime }) => {
-    console.log(laneIndex)
-    console.log(enteringTime)
+    // console.log(laneIndex)
+    // console.log(enteringTime)
     let lane = ["A", "B", "C", "D", "E"]
     let data = enteringTime.map((time, idx) => {
         let id = lane[laneIndex] + '-' + idx

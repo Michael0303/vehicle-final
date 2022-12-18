@@ -46,11 +46,12 @@ export default function Scene1() {
     })
 
     useEffect(() => {
+        console.log(time)
         // setCars(cars.map((carLine) => carLine.filter((car) => car > -25).map((car) => car - 1)))
         if (time > 0) {
             setCars(cars.map((carLine, idx) => carLine.map((car, idy) => {
                 let enteringTime = result.entering_time[idx][idy]
-                if (car !== 0 || time >= enteringTime) {
+                if (car !== 0 || time > enteringTime) {
                     return car - 1
                 } else {
                     return car
@@ -69,7 +70,7 @@ export default function Scene1() {
     }, [result])
 
     useEffect(() => {
-        console.log(result)
+        // console.log(result)
         // console.log(cars)
     }, [result])
 
@@ -145,8 +146,8 @@ export default function Scene1() {
             <Space>
                 <Button
                     onClick={() => {
-                        console.log("start caculate")
-                        console.log(cars)
+                        // console.log("start caculate")
+                        // console.log(cars)
                         setResult(algorithm[choice](W_equal, W_plus, cars, laneNum))
                     }}
                     disabled={(result !== undefined)}
@@ -178,7 +179,7 @@ export default function Scene1() {
                     disabled={run}
                 >Reset</Button>
             </Space><br />
-            <h3>Current Time is {time}</h3>
+            <h3>Current Time is {time - 1}</h3>
             <div style={{ position: 'absolute', textAlign: 'center' }}>
                 {[...Array(laneNum).keys()].map((index) => <Lane key={index} id={index} x={0} y={200 + 50 * index} width={1000} height={50} cars={cars} setCars={setCars} laneNum={laneNum} idx={index} />)}
                 <Merge x={1000} y={200 + 50 * (laneNum - 1) / 2} width={200} height={50 * laneNum} mergeHeight={50} />
