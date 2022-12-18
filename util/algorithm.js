@@ -129,15 +129,17 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
     const findmin = (arr) => {
         if (arr.length === 0) throw "array length equals to zero";
         let min = arr[0];
-        let minIndex = 0;
+        let minIndices = [0]
 
         for (let i = 1; i < arr.length; i++) {
             if (arr[i] < min) {
-                minIndex = i;
+                minIndices = [i]
                 min = arr[i];
+            } else if (arr[i] === min) {
+                minIndices.push(i)
             }
         }
-        return [min, minIndex];
+        return [min, minIndices];
     };
 
     let a = [0, ..._a];
@@ -248,8 +250,13 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
                             time2[i - 1][j][k][lane] + W_2
                         );
                     });
-                    [time2[i][j][k][Lane.A], backtrack2[i][j][k][Lane.A]] =
-                        findmin(ALanes);
+                    let minIndices;
+                    [time2[i][j][k][Lane.A], minIndices] = findmin(ALanes)
+                    if (minIndices.length > 1 && minIndices.some(lane => lane === Lane.A || lane === Lane.B)) {
+                       backtrack2[i][j][k][Lane.A] = time1[i][j][Lane.A] < time1[i][j][Lane.B] ? Lane.A : Lane.B;
+                    }
+                    else 
+                        backtrack2[i][j][k][Lane.A] = minIndices[0]
                     if (i == 1 && !j && !k)
                         backtrack2[i][j][k][Lane.A] = Lane.Out;
                 }
@@ -266,8 +273,13 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
                             time2[i][j - 1][k][lane] + W_2
                         );
                     });
-                    [time2[i][j][k][Lane.B], backtrack2[i][j][k][Lane.B]] =
-                        findmin(BLanes);
+                    let minIndices;
+                    [time2[i][j][k][Lane.B], minIndices] = findmin(BLanes)
+                    if (minIndices.length > 1 && minIndices.some(lane => lane === Lane.A || lane === Lane.B)) {
+                       backtrack2[i][j][k][Lane.B] = time1[i][j][Lane.A] < time1[i][j][Lane.B] ? Lane.A : Lane.B;
+                    }
+                    else 
+                        backtrack2[i][j][k][Lane.B] = minIndices[0]
                     if (j == 1 && !i && !k)
                         backtrack2[i][j][k][Lane.B] = Lane.Out;
                 }
@@ -310,7 +322,14 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
     Lane.toList().forEach((lane) => {
         entering_time2[lane] = [];
     });
-    lane = findmin(time2[alpha][beta][gamma])[1]; // findmin return min, minIndex
+    const [min, minIndex] = findmin(time2[alpha][beta][gamma]);
+    const minLanes = [...time2[alpha][beta][gamma].keys()].filter(lane => time2[alpha][beta][gamma][lane] === min)
+    if (minLanes.length > 1) {
+        // same result from A, B => follow time1 order
+        lane = time1[alpha][beta][Lane.A] < time1[alpha][beta][Lane.B] ? Lane.A : Lane.B
+    } else {
+        lane = minIndex
+    }
     i = alpha;
     j = beta;
     let k = gamma;
