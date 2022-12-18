@@ -124,6 +124,7 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
     let alpha = _a.length;
     let beta = _b.length;
     let gamma = _c.length;
+    console.log('gamma', gamma)
 
     // values in arr must follow the order of Lane
     const findmin = (arr) => {
@@ -322,19 +323,21 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
     Lane.toList().forEach((lane) => {
         entering_time2[lane] = [];
     });
-    const [min, minIndex] = findmin(time2[alpha][beta][gamma]);
-    const minLanes = [...time2[alpha][beta][gamma].keys()].filter(lane => time2[alpha][beta][gamma][lane] === min)
-    if (minLanes.length > 1) {
+    const [min, minIndices] = findmin(time2[alpha][beta][gamma]);
+    if (minIndices.length > 1 && minIndices.some(lane => lane === Lane.A || lane === Lane.B)) {
         // same result from A, B => follow time1 order
         lane = time1[alpha][beta][Lane.A] < time1[alpha][beta][Lane.B] ? Lane.A : Lane.B
     } else {
-        lane = minIndex
+        lane = minIndices[0]
     }
     i = alpha;
     j = beta;
     let k = gamma;
     while (lane != Lane.Out) {
         last_lane = lane;
+        console.log('i,j,k', i, j, k)
+        console.log('lane', lane)
+        console.log('before push', time2[i][j][k])
         entering_time2[lane].push(time2[i][j][k][lane]);
         lane = backtrack2[i][j][k][lane];
         if (last_lane === Lane.A) i--;
