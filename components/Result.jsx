@@ -11,6 +11,12 @@ const columns = [
         render: (text) => <a>{text}</a>,
     },
     {
+        title: 'Arriving Time',
+        dataIndex: 'arrivingTime',
+        key: 'arrivingTime',
+        render: (text) => <a>{text}</a>,
+    },
+    {
         title: 'Entering Time',
         dataIndex: 'enteringTime',
         key: 'enteringTime',
@@ -41,7 +47,7 @@ const columns = [
     },
 ];
 
-const Result = ({ laneIndex, enteringTime, currentTime }) => {
+const Result = ({ laneIndex, enteringTime, arrivingTime, currentTime }) => {
     console.log(laneIndex)
     console.log(enteringTime)
     let lane = ["A", "B", "C", "D", "E"]
@@ -50,6 +56,7 @@ const Result = ({ laneIndex, enteringTime, currentTime }) => {
         return {
             key: id,
             number: id,
+            arrivingTime: arrivingTime[idx],
             enteringTime: enteringTime[idx],
             status: currentTime[idx],
         }

@@ -1,7 +1,7 @@
 import CarModal from '../components/CarModal';
 import { useState, useEffect } from 'react';
 import { Space, InputNumber, Button, Radio } from 'antd';
-import { fcfs_multiple, dp, dp2, dp_multiple } from '../util/algorithm';
+import { fcfs_multiple, dp_multiple } from '../util/algorithm';
 import Lane from '../components/Lane'
 import Merge from '../components/Merge';
 import Car from '../components/Car';
@@ -126,7 +126,7 @@ export default function Scene1() {
                     setCars(cars.map((car_line, index) => {
                         if (index === number) {
                             car_line.push(time)
-                            car_line.sort()
+                            car_line.sort((a, b) => a - b)
                         }
                         return car_line
                     }))
@@ -145,6 +145,8 @@ export default function Scene1() {
             <Space>
                 <Button
                     onClick={() => {
+                        console.log("start caculate")
+                        console.log(cars)
                         setResult(algorithm[choice](W_equal, W_plus, cars, laneNum))
                     }}
                     disabled={(result !== undefined)}
@@ -184,14 +186,14 @@ export default function Scene1() {
                 {cars.map((carLine, idx) =>
                     carLine.map((time, index) => {
                         if (time > 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1000 - 20 * time} y={200 + 50 * idx} color={"pink"} />
-                        if (time === 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1000} y={200 + 50 * idx} color={"blue"} />
+                        if (time === 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1000} y={200 + 50 * idx} color={"red"} />
                         if (time < 0) return <Car key={"Car" + idx + '-' + index} id={"Car" + idx + '-' + index} x={1200 - 20 * time} color={"green"} enter={true} y={200 + 50 * (laneNum - 1) / 2} />
                     }))}
             </div>
             {(result === undefined) ? null :
                 <TableWrapper>
                     {[...Array(laneNum).keys()].map((idx) => {
-                        return <Result laneIndex={idx} enteringTime={result.entering_time[idx]} currentTime={cars[idx]} />
+                        return <Result laneIndex={idx} enteringTime={result.entering_time[idx]} arrivingTime={savedCars[idx]} currentTime={cars[idx]} />
                     })}
                 </TableWrapper>
             }

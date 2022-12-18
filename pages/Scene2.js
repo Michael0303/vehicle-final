@@ -11,11 +11,19 @@ const Scene1Wrapper = styled.div`
     text-align: center;
     position: relative;
 `
-const TableWrapper = styled.div`
+const TableWrapper1 = styled.div`
     position: absolute;
     width: auto
     background-color: black;
     top: 600px;
+    display: flex;
+    justify-content: center;
+`
+const TableWrapper2 = styled.div`
+    position: absolute;
+    width: auto
+    background-color: black;
+    top: 700px;
     display: flex;
     justify-content: center;
 `
@@ -46,17 +54,34 @@ export default function Scene1() {
     })
 
     useEffect(() => {
-        // setCars(cars.map((carLine) => carLine.filter((car) => car > -25).map((car) => car - 1)))
         if (time > 0) {
-            // setCars(cars.map((carLine, idx) => carLine.map((car, idy) => {
-            //     let enteringTime = result.entering_time[idx][idy]
-            //     if (car !== 0 || time >= enteringTime) {
-            //         return car - 1
-            //     } else {
-            //         return car
-            //     }
-            // })))
-            setCars(cars.map((carLine, idx) => carLine.map((car, idy) => car - 1)))
+            setCars(cars.map((carLine, idx) => carLine.map((car, idy) => {
+                switch (idx) {
+                    case 0:
+                    case 1: {
+                        let entering_time1 = result.entering_time1[idx][idy]
+                        let entering_time2 = result.entering_time2[idx][idy]
+                        if ((car > 0) || (time >= entering_time1 && time < entering_time1 + transferTime) || (time >= entering_time2)) {
+                            return car - 1
+                        } else {
+                            return car
+                        }
+                        break
+                    }
+                    case 2: {
+                        let entering_time2 = result.entering_time2[idx][idy]
+                        if ((car > 0) || (time >= entering_time2)) {
+                            return car - 1
+                        } else {
+                            return car
+                        }
+                        break
+                    }
+                    default:
+                        console.log("something went wrong")
+                }
+            })))
+            // setCars(cars.map((carLine, idx) => carLine.map((car, idy) => car - 1)))
         }
     }, [time])
 
@@ -135,6 +160,8 @@ export default function Scene1() {
             <Space>
                 <Button
                     onClick={() => {
+                        console.log("start calculate")
+                        console.log(cars)
                         setResult(dp2(W_equal1, W_plus1, W_equal2, W_plus2, transferTime, cars[0], cars[1], cars[2]))
                     }}
                     disabled={(result !== undefined)}
@@ -200,14 +227,18 @@ export default function Scene1() {
                 })}
             </div>
             {(result === undefined) ? null :
-                <TableWrapper>
-                    {[...Array(2).keys()].map((idx) => {
-                        return <Result laneIndex={idx} enteringTime={result.entering_time1[idx]} currentTime={cars[idx]} />
-                    })}
-                    {[...Array(3).keys()].map((idx) => {
-                        return <Result laneIndex={idx} enteringTime={result.entering_time2[idx]} currentTime={cars[idx]} />
-                    })}
-                </TableWrapper>
+                <>
+                    <TableWrapper1>
+                        {[...Array(2).keys()].map((idx) => {
+                            return <Result laneIndex={idx} enteringTime={result.entering_time1[idx]} arrivingTime={savedCars[idx]} currentTime={cars[idx]} />
+                        })}
+                    </TableWrapper1>
+                    <TableWrapper2>
+                        {[...Array(3).keys()].map((idx) => {
+                            return <Result laneIndex={idx} enteringTime={result.entering_time2[idx]} arrivingTime={savedCars[idx]} currentTime={cars[idx]} />
+                        })}
+                    </TableWrapper2>
+                </>
             }
 
         </Scene1Wrapper>

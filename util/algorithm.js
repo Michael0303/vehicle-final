@@ -244,7 +244,7 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
                             mp2Lane === Lane.toMP2(Lane.A) ? W_equal2 : W_plus2;
                         return Math.max(
                             Math.max(a[i], time1[i - 1][j][mp1Lane] + W_1) +
-                                T_f,
+                            T_f,
                             time2[i - 1][j][k][lane] + W_2
                         );
                     });
@@ -326,7 +326,7 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
     entering_time2[Lane.Ca] = [
         ...entering_time2[Lane.Ca],
         ...entering_time2[Lane.Cb],
-    ].sort();
+    ].sort((a, b) => a - b);
     entering_time2[Lane.Cb] = [];
     return { entering_time1, entering_time2, Lane };
     // print(backtrack2);
