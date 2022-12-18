@@ -46,7 +46,7 @@ export default function Scene1() {
     })
 
     useEffect(() => {
-        console.log(time)
+        // console.log(time)
         // setCars(cars.map((carLine) => carLine.filter((car) => car > -25).map((car) => car - 1)))
         if (time > 0) {
             setCars(cars.map((carLine, idx) => carLine.map((car, idy) => {

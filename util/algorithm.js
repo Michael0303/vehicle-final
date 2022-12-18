@@ -190,8 +190,8 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
                 }
             }
             if (j > 0) {
-                let BA = Math.max(b[i], time1[i][j - 1][Lane.A] + W_plus1);
-                let BB = Math.max(b[i], time1[i][j - 1][Lane.B] + W_equal1);
+                let BA = Math.max(b[j], time1[i][j - 1][Lane.A] + W_plus1);
+                let BB = Math.max(b[j], time1[i][j - 1][Lane.B] + W_equal1);
                 time1[i][j][Lane.B] = Math.min(BA, BB);
                 backtrack1[i][j][Lane.B] =
                     time1[i][j][Lane.B] == BA ? Lane.A : Lane.B;
@@ -237,9 +237,9 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
                     if (minIndices.length > 1 &&
                         minIndices.some(lane => lane === Lane.A) &&
                         minIndices.some(lane => lane === Lane.B)) {
-                       backtrack2[i][j][k][Lane.A] = time1[i][j][Lane.A] < time1[i][j][Lane.B] ? Lane.A : Lane.B;
+                        backtrack2[i][j][k][Lane.A] = time1[i][j][Lane.A] < time1[i][j][Lane.B] ? Lane.A : Lane.B;
                     }
-                    else 
+                    else
                         backtrack2[i][j][k][Lane.A] = minIndices[0]
                     if (i == 1 && !j && !k)
                         backtrack2[i][j][k][Lane.A] = Lane.Out;
@@ -263,9 +263,9 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
                     if (minIndices.length > 1 &&
                         minIndices.some(lane => lane === Lane.A) &&
                         minIndices.some(lane => lane === Lane.B)) {
-                       backtrack2[i][j][k][Lane.B] = time1[i][j][Lane.A] < time1[i][j][Lane.B] ? Lane.A : Lane.B;
+                        backtrack2[i][j][k][Lane.B] = time1[i][j][Lane.A] < time1[i][j][Lane.B] ? Lane.A : Lane.B;
                     }
-                    else 
+                    else
                         backtrack2[i][j][k][Lane.B] = minIndices[0]
                     if (j == 1 && !i && !k)
                         backtrack2[i][j][k][Lane.B] = Lane.Out;
@@ -317,7 +317,7 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
     });
 
     const getLane = (i, j, k) => {
-        if (i + j + k === 0 )
+        if (i + j + k === 0)
             return Lane.Out
         const [min, minIndices] = findmin(time2[i][j][k]);
         let lane;
@@ -339,6 +339,8 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
     let last_lane;
     while (lane != Lane.Out) {
         last_lane = lane;
+        console.log(i + ' ' + j + ' ' + k + ' - ' + lane)
+        console.log(time1[i][j])
         entering_time2[lane].push(time2[i][j][k][lane]);
         if (last_lane === Lane.A) {
             entering_time1[Lane.A].push(time1[i][j][Lane.A])
@@ -486,82 +488,82 @@ const dp_multiple = (W_equal, W_plus, carLines, laneNum) => {
     return { entering_time };
 };
 
-// return entering time for both a_i and b_j
-const dp = (W_equal, W_plus, alpha, beta, _a, _b) => {
-    const Lane = {
-        Out: -1,
-        A: 0,
-        B: 1,
-    };
-    let a = [0, ..._a]; // manually pad at index 0 here
-    let b = [0, ..._b];
+// // return entering time for both a_i and b_j
+// const dp = (W_equal, W_plus, alpha, beta, _a, _b) => {
+//     const Lane = {
+//         Out: -1,
+//         A: 0,
+//         B: 1,
+//     };
+//     let a = [0, ..._a]; // manually pad at index 0 here
+//     let b = [0, ..._b];
 
-    const print = (array) => {
-        for (let i = 0; i <= alpha; i++) {
-            console.log(
-                array[i]
-                    .map((ele) => `{${ele[Lane.A]},${ele[Lane.B]}}`)
-                    .join("      ")
-            );
-        }
-    };
+//     const print = (array) => {
+//         for (let i = 0; i <= alpha; i++) {
+//             console.log(
+//                 array[i]
+//                     .map((ele) => `{${ele[Lane.A]},${ele[Lane.B]}}`)
+//                     .join("      ")
+//             );
+//         }
+//     };
 
-    // create a {alpha+1} x {beta+1} x {2} array
-    let time = Array.from({ length: alpha + 1 }, () =>
-        Array.from({ length: beta + 1 }, () => [Infinity, Infinity])
-    );
-    let backtrack = Array.from({ length: alpha + 1 }, () =>
-        Array.from({ length: beta + 1 }, () => [Lane.Out, Lane.Out])
-    );
+//     // create a {alpha+1} x {beta+1} x {2} array
+//     let time = Array.from({ length: alpha + 1 }, () =>
+//         Array.from({ length: beta + 1 }, () => [Infinity, Infinity])
+//     );
+//     let backtrack = Array.from({ length: alpha + 1 }, () =>
+//         Array.from({ length: beta + 1 }, () => [Lane.Out, Lane.Out])
+//     );
 
-    time[0][0][Lane.A] = time[0][0][Lane.B] = 0;
-    time[1][0][Lane.A] = a[1];
-    time[0][1][Lane.B] = b[1];
-    backtrack[0][0][Lane.A] = backtrack[0][0][Lane.B] = Lane.Out;
-    backtrack[1][0][Lane.A] = backtrack[0][1][Lane.B] = Lane.Out;
+//     time[0][0][Lane.A] = time[0][0][Lane.B] = 0;
+//     time[1][0][Lane.A] = a[1];
+//     time[0][1][Lane.B] = b[1];
+//     backtrack[0][0][Lane.A] = backtrack[0][0][Lane.B] = Lane.Out;
+//     backtrack[1][0][Lane.A] = backtrack[0][1][Lane.B] = Lane.Out;
 
-    for (let i = 2; i <= alpha; i++) {
-        time[i][0][Lane.A] = Math.max(a[i], time[i - 1][0][Lane.A] + W_equal);
-        backtrack[i][0][Lane.A] = Lane.A;
-    }
-    for (let j = 2; j <= beta; j++) {
-        time[0][j][Lane.B] = Math.max(b[j], time[0][j - 1][Lane.B] + W_equal);
-        backtrack[0][j][Lane.B] = Lane.B;
-    }
+//     for (let i = 2; i <= alpha; i++) {
+//         time[i][0][Lane.A] = Math.max(a[i], time[i - 1][0][Lane.A] + W_equal);
+//         backtrack[i][0][Lane.A] = Lane.A;
+//     }
+//     for (let j = 2; j <= beta; j++) {
+//         time[0][j][Lane.B] = Math.max(b[j], time[0][j - 1][Lane.B] + W_equal);
+//         backtrack[0][j][Lane.B] = Lane.B;
+//     }
 
-    for (let i = 1; i <= alpha; i++) {
-        for (let j = 1; j <= beta; j++) {
-            let AA = Math.max(a[i], time[i - 1][j][Lane.A] + W_equal);
-            let AB = Math.max(a[i], time[i - 1][j][Lane.B] + W_plus);
-            let BA = Math.max(b[i], time[i][j - 1][Lane.A] + W_plus);
-            let BB = Math.max(b[i], time[i][j - 1][Lane.B] + W_equal);
-            time[i][j][Lane.A] = Math.min(AA, AB);
-            backtrack[i][j][Lane.A] =
-                time[i][j][Lane.A] == AA ? Lane.A : Lane.B;
-            time[i][j][Lane.B] = Math.min(BA, BB);
-            backtrack[i][j][Lane.B] =
-                time[i][j][Lane.B] == BA ? Lane.A : Lane.B;
-        }
-    }
-    const entering_time = {};
-    entering_time[Lane.A] = [];
-    entering_time[Lane.B] = [];
-    let lane =
-        time[alpha][beta][Lane.A] < time[alpha][beta][Lane.B] ? Lane.A : Lane.B;
-    let i = alpha,
-        j = beta;
-    let last_lane;
-    while (lane != Lane.Out) {
-        last_lane = lane;
-        entering_time[lane].push(time[i][j][lane]);
-        lane = backtrack[i][j][lane];
-        if (last_lane === Lane.A) i--;
-        else j--;
-    }
-    entering_time[Lane.A].reverse();
-    entering_time[Lane.B].reverse();
-    return { entering_time, Lane };
-};
+//     for (let i = 1; i <= alpha; i++) {
+//         for (let j = 1; j <= beta; j++) {
+//             let AA = Math.max(a[i], time[i - 1][j][Lane.A] + W_equal);
+//             let AB = Math.max(a[i], time[i - 1][j][Lane.B] + W_plus);
+//             let BA = Math.max(b[i], time[i][j - 1][Lane.A] + W_plus);
+//             let BB = Math.max(b[i], time[i][j - 1][Lane.B] + W_equal);
+//             time[i][j][Lane.A] = Math.min(AA, AB);
+//             backtrack[i][j][Lane.A] =
+//                 time[i][j][Lane.A] == AA ? Lane.A : Lane.B;
+//             time[i][j][Lane.B] = Math.min(BA, BB);
+//             backtrack[i][j][Lane.B] =
+//                 time[i][j][Lane.B] == BA ? Lane.A : Lane.B;
+//         }
+//     }
+//     const entering_time = {};
+//     entering_time[Lane.A] = [];
+//     entering_time[Lane.B] = [];
+//     let lane =
+//         time[alpha][beta][Lane.A] < time[alpha][beta][Lane.B] ? Lane.A : Lane.B;
+//     let i = alpha,
+//         j = beta;
+//     let last_lane;
+//     while (lane != Lane.Out) {
+//         last_lane = lane;
+//         entering_time[lane].push(time[i][j][lane]);
+//         lane = backtrack[i][j][lane];
+//         if (last_lane === Lane.A) i--;
+//         else j--;
+//     }
+//     entering_time[Lane.A].reverse();
+//     entering_time[Lane.B].reverse();
+//     return { entering_time, Lane };
+// };
 
 const test = () => {
     let a = [1, 3, 4, 6];
@@ -573,14 +575,14 @@ const test = () => {
     dp_multiple(1, 3, carLines, 3);
 };
 const test2 = () => {
-    let a = [5];
-    let b = [6];
-    let c = [5, 10];
-    const result = dp2(1, 3, 1, 3, 5, a, b, c);
+    let a = [5, 13];
+    let b = [23];
+    let c = [23];
+    const result = dp2(1, 3, 1, 3, 10, a, b, c);
     delete result['Lane']
     console.log(result)
 };
 // test();
 // test2();
 
-export { fcfs, fcfs_multiple, dp, dp2, dp_multiple }
+export { fcfs_multiple, dp2, dp_multiple }

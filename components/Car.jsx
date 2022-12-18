@@ -23,7 +23,7 @@ const Link = styled(MaterialIcon)`
 `
 
 export default function Car({ x = 0, y = 0, id, color, enter = false }) {
-    console.log(`car #${id} is at (${x}, ${y})`)
+    // console.log(`car #${id} is at (${x}, ${y})`)
     return (
         <CarWrapper x={x} y={y} color={color}>
             <Link />

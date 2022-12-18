@@ -58,12 +58,12 @@ export default function Scene1() {
 
     useEffect(() => {
         if (time > 0) {
-            console.log(time)
+            // console.log(time)
             setCars(cars.map((carLine, idx) => carLine.map((car, idy) => {
                 switch (idx) {
                     case 0:
                     case 1: {
-                        console.log(idx + '-' + idy + ': ' + car)
+                        // console.log(idx + '-' + idy + ': ' + car)
                         let entering_time1 = result.entering_time1[idx][idy]
                         let entering_time2 = result.entering_time2[idx][idy]
                         if ((car > 0) || (time > entering_time1 && time <= entering_time1 + transferTime) || (time > entering_time2)) {
