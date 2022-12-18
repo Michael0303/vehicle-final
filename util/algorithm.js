@@ -124,7 +124,6 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
     let alpha = _a.length;
     let beta = _b.length;
     let gamma = _c.length;
-    console.log('gamma', gamma)
 
     // values in arr must follow the order of Lane
     const findmin = (arr) => {
@@ -253,7 +252,9 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
                     });
                     let minIndices;
                     [time2[i][j][k][Lane.A], minIndices] = findmin(ALanes)
-                    if (minIndices.length > 1 && minIndices.some(lane => lane === Lane.A || lane === Lane.B)) {
+                    if (minIndices.length > 1 &&
+                        minIndices.some(lane => lane === Lane.A) &&
+                        minIndices.some(lane => lane === Lane.B)) {
                        backtrack2[i][j][k][Lane.A] = time1[i][j][Lane.A] < time1[i][j][Lane.B] ? Lane.A : Lane.B;
                     }
                     else 
@@ -276,7 +277,9 @@ const dp2 = (W_equal1, W_plus1, W_equal2, W_plus2, T_f, _a, _b, _c) => {
                     });
                     let minIndices;
                     [time2[i][j][k][Lane.B], minIndices] = findmin(BLanes)
-                    if (minIndices.length > 1 && minIndices.some(lane => lane === Lane.A || lane === Lane.B)) {
+                    if (minIndices.length > 1 &&
+                        minIndices.some(lane => lane === Lane.A) &&
+                        minIndices.some(lane => lane === Lane.B)) {
                        backtrack2[i][j][k][Lane.B] = time1[i][j][Lane.A] < time1[i][j][Lane.B] ? Lane.A : Lane.B;
                     }
                     else 
